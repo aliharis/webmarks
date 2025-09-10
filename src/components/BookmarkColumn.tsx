@@ -88,26 +88,25 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
   };
 
   return (
-    <div 
-      className={`flex-shrink-0 w-72 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-lg border border-white border-opacity-20 transition-all duration-200 transform-gpu ${
-        isDragging 
-          ? 'opacity-30 scale-95 rotate-2 z-50 shadow-2xl' 
-          : isDraggedOver 
-            ? 'scale-105 shadow-2xl ring-2 ring-blue-400 ring-opacity-50' 
+    <div
+      className={`overflow-hidden flex-shrink-0 w-72 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-lg border border-white border-opacity-20 transition-all duration-200 transform-gpu ${isDragging
+          ? 'opacity-30 scale-95 rotate-2 z-50 shadow-2xl'
+          : isDraggedOver
+            ? 'scale-105 shadow-2xl ring-2 ring-blue-400 ring-opacity-50'
             : 'hover:shadow-xl hover:scale-[1.02]'
-      }`}
+        }`}
       draggable
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       {/* Column Header */}
-      <div 
+      <div
         className="flex items-center justify-between p-3 border-b border-gray-200 border-opacity-50 cursor-pointer hover:bg-gray-50 hover:bg-opacity-50 transition-colors"
         onClick={handleHeaderClick}
       >
         <div className="flex items-center space-x-2">
-          <div 
+          <div
             className="w-2.5 h-2.5 rounded-full shadow-sm"
             style={{ backgroundColor: list.color }}
           ></div>
@@ -131,7 +130,7 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
               }}
               className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 hover:bg-opacity-70 rounded-lg transition-all"
             >
-            <MoreHorizontal className="w-3.5 h-3.5" />
+              <MoreHorizontal className="w-3.5 h-3.5" />
             </button>
 
             {showMenu && (

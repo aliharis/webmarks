@@ -151,7 +151,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   }, {} as Record<string, BookmarkFolder[]>);
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage: 'url(/sergei-gussev-010yr9rFtIc-unsplash.jpg)',
@@ -159,7 +159,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     >
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-      
+
       <div className="relative z-10 px-6 py-6">
         {/* Header - Same as main page */}
         <div className="mb-4">
@@ -218,23 +218,18 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                         onClick={() => toggleFolder(folder.id)}
                       >
                         <div className="flex-shrink-0">
-                          <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${
-                            selectedFolders.has(folder.id)
+                          <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${selectedFolders.has(folder.id)
                               ? 'bg-blue-500 border-blue-500 scale-105'
                               : 'border-gray-300 hover:border-blue-400'
-                          }`}>
+                            }`}>
                             {selectedFolders.has(folder.id) && (
                               <Check className="h-4 w-4 text-white" />
                             )}
                           </div>
                         </div>
-                        <Folder className={`h-5 w-5 flex-shrink-0 transition-colors duration-200 ${
-                          selectedFolders.has(folder.id) ? 'text-blue-500' : 'text-gray-400'
-                        }`} />
                         <div className="flex-1 min-w-0">
-                          <div className={`font-medium truncate ${
-                            selectedFolders.has(folder.id) ? 'text-blue-900' : 'text-gray-800'
-                          }`}>{folder.title}</div>
+                          <div className={`font-medium truncate ${selectedFolders.has(folder.id) ? 'text-blue-900' : 'text-gray-800'
+                            }`}>{folder.title}</div>
                           <div className="text-gray-500 text-sm truncate mt-0.5">{folder.path}</div>
                         </div>
                         <div className="flex-shrink-0 ml-3">
@@ -271,7 +266,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                     </>
                   )}
                 </div>
-                
+
                 <div className="flex gap-3">
                   <button
                     onClick={onClose}
@@ -282,11 +277,10 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                   <button
                     onClick={saveSettings}
                     disabled={selectedFolders.size === 0}
-                    className={`px-5 py-2.5 rounded-lg transition-all font-medium ${
-                      selectedFolders.size > 0
+                    className={`px-5 py-2.5 rounded-lg transition-all font-medium ${selectedFolders.size > 0
                         ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                      }`}
                   >
                     Save Settings
                   </button>

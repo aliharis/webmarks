@@ -271,7 +271,7 @@ const BookmarkManagementModal: React.FC<BookmarkManagementModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
           <button
             onClick={handleRemoveFolder}
             disabled={bookmarks.length > 0}

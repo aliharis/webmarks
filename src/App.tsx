@@ -65,7 +65,7 @@ function App() {
         const folders = await loadSelectedFolders();
         const result = await chrome.storage.local.get(['selectedFolders']);
         const selected = result.selectedFolders || [];
-        
+
         if (selected.length > 0) {
           const extractedData = extractBookmarksFromFolders(tree[0], selected);
           setLists(extractedData.lists);
@@ -132,17 +132,17 @@ function App() {
     };
 
     processNode(node);
-    
+
     // Sort bookmarks by most recent (default sort order) for each list
     const sortedBookmarks = [...bookmarks].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    
+
     return { lists, bookmarks: sortedBookmarks };
   };
 
   // Filter bookmarks based on search
   const filteredBookmarks = useMemo(() => {
     return bookmarks.filter(bookmark => {
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch = searchQuery === '' ||
         bookmark.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         bookmark.url.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -162,10 +162,10 @@ function App() {
       createdAt: new Date(),
     };
     setBookmarks(prev => [newBookmark, ...prev]);
-    
+
     // Update list bookmark count
-    setLists(prev => prev.map(list => 
-      list.id === data.listId 
+    setLists(prev => prev.map(list =>
+      list.id === data.listId
         ? { ...list, bookmarkCount: list.bookmarkCount + 1 }
         : list
     ));
@@ -211,15 +211,15 @@ function App() {
       if (chrome?.bookmarks) {
         await chrome.bookmarks.remove(bookmarkId);
       }
-      
+
       // Update local state
       setBookmarks(prev => prev.filter(bookmark => bookmark.id !== bookmarkId));
-      
+
       // Update list bookmark count
       const deletedBookmark = bookmarks.find(b => b.id === bookmarkId);
       if (deletedBookmark) {
-        setLists(prev => prev.map(list => 
-          list.id === deletedBookmark.listId 
+        setLists(prev => prev.map(list =>
+          list.id === deletedBookmark.listId
             ? { ...list, bookmarkCount: list.bookmarkCount - 1 }
             : list
         ));
@@ -237,18 +237,18 @@ function App() {
       if (chrome?.bookmarks) {
         await chrome.bookmarks.move(bookmarkId, { parentId: targetListId });
       }
-      
+
       // Update local state
       const bookmarkToMove = bookmarks.find(b => b.id === bookmarkId);
       if (bookmarkToMove) {
         const oldListId = bookmarkToMove.listId;
-        
+
         setBookmarks(prev => prev.map(bookmark =>
           bookmark.id === bookmarkId
             ? { ...bookmark, listId: targetListId }
             : bookmark
         ));
-        
+
         // Update list bookmark counts
         setLists(prev => prev.map(list => {
           if (list.id === oldListId) {
@@ -279,17 +279,17 @@ function App() {
       if (chrome?.bookmarks) {
         await chrome.bookmarks.removeTree(listId);
       }
-      
+
       // Update local state - remove all bookmarks from this folder
       setBookmarks(prev => prev.filter(bookmark => bookmark.listId !== listId));
-      
+
       // Remove the list from lists
       setLists(prev => prev.filter(list => list.id !== listId));
-      
+
       // Update selected folders to remove this folder
       const updatedSelectedFolders = selectedFolders.filter(folderId => folderId !== listId);
       setSelectedFolders(updatedSelectedFolders);
-      
+
       // Save updated selected folders
       try {
         if (chrome?.storage) {
@@ -300,7 +300,7 @@ function App() {
       } catch (storageError) {
         console.error('Error updating selected folders:', storageError);
       }
-      
+
     } catch (error) {
       console.error('Error removing folder:', error);
       // For now, still update local state even if Chrome API fails
@@ -317,7 +317,7 @@ function App() {
     setBookmarks(prev => {
       const listBookmarks = prev.filter(bookmark => bookmark.listId === listId);
       const otherBookmarks = prev.filter(bookmark => bookmark.listId !== listId);
-      
+
       let sortedBookmarks;
       switch (sortBy) {
         case 'recent':
@@ -332,7 +332,7 @@ function App() {
         default:
           sortedBookmarks = listBookmarks;
       }
-      
+
       return [...otherBookmarks, ...sortedBookmarks];
     });
   };
@@ -350,7 +350,7 @@ function App() {
 
   const handleDrop = (e: React.DragEvent, targetListId: string) => {
     e.preventDefault();
-    
+
     if (!draggedListId || draggedListId === targetListId) {
       setDraggedListId(null);
       return;
@@ -391,7 +391,7 @@ function App() {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage: 'url(/sergei-gussev-010yr9rFtIc-unsplash.jpg)',
@@ -399,11 +399,11 @@ function App() {
     >
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-      
+
       <div className="relative z-10 py-6">
         {/* Header */}
-        <div className="mb-4 px-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white bg-opacity-90 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
                 <Columns className="w-6 h-6 text-gray-800" />
@@ -448,7 +448,7 @@ function App() {
         ) : (
           <div>
             {/* Columns Layout */}
-            <div 
+            <div
               className="flex items-start gap-3 overflow-x-auto pb-10 pt-4"
               onDragLeave={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget as Node)) {
@@ -461,10 +461,10 @@ function App() {
                 const listBookmarks = bookmarks.filter(bookmark => bookmark.listId === list.id);
                 const isDragging = draggedListId === list.id;
                 const isDraggedOver = draggedOverListId === list.id;
-                
+
                 // Show placeholder when dragging over this position
                 const showPlaceholder = draggedListId && draggedOverListId === list.id && draggedListId !== list.id;
-                
+
                 return (
                   <React.Fragment key={list.id}>
                     {showPlaceholder && (
@@ -543,11 +543,11 @@ function App() {
           onRemoveFolder={handleRemoveFolder}
         />
       )}
-      
+
       {/* Image Attribution */}
       <div className="fixed bottom-3 right-3 text-xs text-white text-opacity-70 bg-black bg-opacity-30 backdrop-blur-sm px-3 py-1.5 rounded-full">
         Photo by{' '}
-        <a 
+        <a
           href="https://unsplash.com/@sergeigussev?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
           target="_blank"
           rel="noopener noreferrer"
@@ -556,7 +556,7 @@ function App() {
           Sergei Gussev
         </a>
         {' '}on{' '}
-        <a 
+        <a
           href="https://unsplash.com/photos/010yr9rFtIc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
           target="_blank"
           rel="noopener noreferrer"

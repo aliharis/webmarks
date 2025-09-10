@@ -400,9 +400,9 @@ function App() {
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-20"></div>
       
-      <div className="relative z-10 px-6 py-6">
+      <div className="relative z-10 py-6">
         {/* Header */}
-        <div className="mb-4">
+        <div className="mb-4 px-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white bg-opacity-90 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
@@ -449,7 +449,7 @@ function App() {
           <div>
             {/* Columns Layout */}
             <div 
-              className="flex items-start space-x-3 overflow-x-auto pb-10 pt-4 px-2"
+              className="flex items-start gap-3 overflow-x-auto pb-10 pt-4"
               onDragLeave={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget as Node)) {
                   setDraggedOverListId(null);
@@ -472,19 +472,21 @@ function App() {
                         <div className="text-blue-500 text-sm font-medium">Drop here</div>
                       </div>
                     )}
-                    <BookmarkColumn
-                      list={list}
-                      bookmarks={listBookmarks}
-                      onAddBookmark={handleAddBookmarkToList}
-                      onSort={handleSort}
-                      onDragStart={handleDragStart}
-                      onDragOver={(e) => handleDragOver(e, list.id)}
-                      onDrop={handleDrop}
-                      onColumnClick={handleColumnClick}
-                      isDragging={isDragging}
-                      isDraggedOver={isDraggedOver}
-                      showPlaceholder={false}
-                    />
+                    <div className={`${index === 0 ? 'pl-6' : ''} ${index === listsWithCounts.length - 1 ? 'pr-6' : ''}`}>
+                      <BookmarkColumn
+                        list={list}
+                        bookmarks={listBookmarks}
+                        onAddBookmark={handleAddBookmarkToList}
+                        onSort={handleSort}
+                        onDragStart={handleDragStart}
+                        onDragOver={(e) => handleDragOver(e, list.id)}
+                        onDrop={handleDrop}
+                        onColumnClick={handleColumnClick}
+                        isDragging={isDragging}
+                        isDraggedOver={isDraggedOver}
+                        showPlaceholder={false}
+                      />
+                    </div>
                   </React.Fragment>
                 );
               })}

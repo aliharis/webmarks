@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Webmarks",
   "version": "1.0.0",
-  "description": "A Chrome extension for managing webmarks",
+  "description": "A Chrome extension for managing bookmarks",
   "permissions": [
     "bookmarks",
     "tabs",

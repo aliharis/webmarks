@@ -7,7 +7,8 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      app: './src/main.tsx'
+      app: './src/main.tsx',
+      background: './src/background.ts'
     },
     output: {
       path: path.resolve(__dirname, 'dist'),

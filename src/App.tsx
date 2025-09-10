@@ -541,6 +541,28 @@ function App() {
           onRemoveFolder={handleRemoveFolder}
         />
       )}
+      
+      {/* Image Attribution */}
+      <div className="fixed bottom-3 right-3 text-xs text-white text-opacity-70 bg-black bg-opacity-30 backdrop-blur-sm px-3 py-1.5 rounded-full">
+        Photo by{' '}
+        <a 
+          href="https://unsplash.com/@sergeigussev?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-opacity-100 transition-opacity"
+        >
+          Sergei Gussev
+        </a>
+        {' '}on{' '}
+        <a 
+          href="https://unsplash.com/photos/010yr9rFtIc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-opacity-100 transition-opacity"
+        >
+          Unsplash
+        </a>
+      </div>
     </div>
   );
 }

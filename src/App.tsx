@@ -8,6 +8,7 @@ import AddDropdown from './components/AddDropdown';
 import AddListModal from './components/AddListModal';
 import Settings from './components/Settings';
 import EmptyState from './components/EmptyState';
+import BookmarkManagementModal from './components/BookmarkManagementModal';
 import { Bookmark, BookmarkFormData, BookmarkList } from './types';
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
   const [chromeBookmarks, setChromeBookmarks] = useState<any[]>([]);
+  const [showBookmarkManagementModal, setShowBookmarkManagementModal] = useState(false);
+  const [selectedManagementListId, setSelectedManagementListId] = useState<string | null>(null);
 
   // Load Chrome bookmarks and selected folders
   useEffect(() => {
@@ -129,7 +132,11 @@ function App() {
     };
 
     processNode(node);
-    return { lists, bookmarks };
+    
+    // Sort bookmarks by most recent (default sort order) for each list
+    const sortedBookmarks = [...bookmarks].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    return { lists, bookmarks: sortedBookmarks };
   };
 
   // Filter bookmarks based on search
@@ -186,6 +193,120 @@ function App() {
       bookmarkCount: 0,
     };
     setLists(prev => [...prev, newList]);
+  };
+
+  const handleColumnClick = (listId: string) => {
+    setSelectedManagementListId(listId);
+    setShowBookmarkManagementModal(true);
+  };
+
+  const handleCloseBookmarkManagementModal = () => {
+    setShowBookmarkManagementModal(false);
+    setSelectedManagementListId(null);
+  };
+
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    try {
+      // If using Chrome bookmarks API, delete from Chrome
+      if (chrome?.bookmarks) {
+        await chrome.bookmarks.remove(bookmarkId);
+      }
+      
+      // Update local state
+      setBookmarks(prev => prev.filter(bookmark => bookmark.id !== bookmarkId));
+      
+      // Update list bookmark count
+      const deletedBookmark = bookmarks.find(b => b.id === bookmarkId);
+      if (deletedBookmark) {
+        setLists(prev => prev.map(list => 
+          list.id === deletedBookmark.listId 
+            ? { ...list, bookmarkCount: list.bookmarkCount - 1 }
+            : list
+        ));
+      }
+    } catch (error) {
+      console.error('Error deleting bookmark:', error);
+      // For now, still update local state even if Chrome API fails
+      setBookmarks(prev => prev.filter(bookmark => bookmark.id !== bookmarkId));
+    }
+  };
+
+  const handleMoveBookmark = async (bookmarkId: string, targetListId: string) => {
+    try {
+      // If using Chrome bookmarks API, move the bookmark
+      if (chrome?.bookmarks) {
+        await chrome.bookmarks.move(bookmarkId, { parentId: targetListId });
+      }
+      
+      // Update local state
+      const bookmarkToMove = bookmarks.find(b => b.id === bookmarkId);
+      if (bookmarkToMove) {
+        const oldListId = bookmarkToMove.listId;
+        
+        setBookmarks(prev => prev.map(bookmark =>
+          bookmark.id === bookmarkId
+            ? { ...bookmark, listId: targetListId }
+            : bookmark
+        ));
+        
+        // Update list bookmark counts
+        setLists(prev => prev.map(list => {
+          if (list.id === oldListId) {
+            return { ...list, bookmarkCount: list.bookmarkCount - 1 };
+          } else if (list.id === targetListId) {
+            return { ...list, bookmarkCount: list.bookmarkCount + 1 };
+          }
+          return list;
+        }));
+      }
+    } catch (error) {
+      console.error('Error moving bookmark:', error);
+      // For now, still update local state even if Chrome API fails
+      const bookmarkToMove = bookmarks.find(b => b.id === bookmarkId);
+      if (bookmarkToMove) {
+        setBookmarks(prev => prev.map(bookmark =>
+          bookmark.id === bookmarkId
+            ? { ...bookmark, listId: targetListId }
+            : bookmark
+        ));
+      }
+    }
+  };
+
+  const handleRemoveFolder = async (listId: string) => {
+    try {
+      // If using Chrome bookmarks API, remove the entire folder
+      if (chrome?.bookmarks) {
+        await chrome.bookmarks.removeTree(listId);
+      }
+      
+      // Update local state - remove all bookmarks from this folder
+      setBookmarks(prev => prev.filter(bookmark => bookmark.listId !== listId));
+      
+      // Remove the list from lists
+      setLists(prev => prev.filter(list => list.id !== listId));
+      
+      // Update selected folders to remove this folder
+      const updatedSelectedFolders = selectedFolders.filter(folderId => folderId !== listId);
+      setSelectedFolders(updatedSelectedFolders);
+      
+      // Save updated selected folders
+      try {
+        if (chrome?.storage) {
+          await chrome.storage.local.set({ selectedFolders: updatedSelectedFolders });
+        } else {
+          localStorage.setItem('selectedFolders', JSON.stringify(updatedSelectedFolders));
+        }
+      } catch (storageError) {
+        console.error('Error updating selected folders:', storageError);
+      }
+      
+    } catch (error) {
+      console.error('Error removing folder:', error);
+      // For now, still update local state even if Chrome API fails
+      setBookmarks(prev => prev.filter(bookmark => bookmark.listId !== listId));
+      setLists(prev => prev.filter(list => list.id !== listId));
+    }
   };
 
   const handleClearSearch = () => {
@@ -288,7 +409,7 @@ function App() {
                 <Columns className="w-6 h-6 text-gray-800" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-white drop-shadow-lg">Bookmarks</h1>
+                <h1 className="text-xl font-semibold text-white drop-shadow-lg">Webmarks</h1>
                 <p className="text-white text-opacity-90 text-xs drop-shadow">Organize your links across lists</p>
               </div>
             </div>
@@ -304,7 +425,7 @@ function App() {
                 <SearchBar
                   value={searchQuery}
                   onChange={setSearchQuery}
-                  placeholder="Search bookmarks..."
+                  placeholder="Search webmarks..."
                 />
               </div>
               <AddDropdown
@@ -325,10 +446,10 @@ function App() {
         ) : listsWithCounts.length === 0 ? (
           <EmptyState onOpenSettings={() => setShowSettings(true)} />
         ) : (
-          <>
+          <div>
             {/* Columns Layout */}
             <div 
-              className="flex items-start space-x-3 overflow-x-auto pb-4"
+              className="flex items-start space-x-3 overflow-x-auto pb-10 pt-4 px-2"
               onDragLeave={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget as Node)) {
                   setDraggedOverListId(null);
@@ -359,6 +480,7 @@ function App() {
                       onDragStart={handleDragStart}
                       onDragOver={(e) => handleDragOver(e, list.id)}
                       onDrop={handleDrop}
+                      onColumnClick={handleColumnClick}
                       isDragging={isDragging}
                       isDraggedOver={isDraggedOver}
                       showPlaceholder={false}
@@ -375,7 +497,7 @@ function App() {
                   <BookmarkIcon className="w-8 h-8 text-gray-500" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-800 mb-2">
-                  Start organizing your bookmarks
+                  Start organizing your webmarks
                 </h3>
                 <p className="text-gray-700 max-w-sm mx-auto mb-6">
                   Create lists to organize your links by topic, priority, or any way that works for you.
@@ -405,6 +527,20 @@ function App() {
         onClose={() => setShowAddListModal(false)}
         onSubmit={handleCreateList}
       />
+
+      {/* Bookmark Management Modal */}
+      {selectedManagementListId && (
+        <BookmarkManagementModal
+          isOpen={showBookmarkManagementModal}
+          onClose={handleCloseBookmarkManagementModal}
+          list={listsWithCounts.find(list => list.id === selectedManagementListId)!}
+          bookmarks={bookmarks.filter(bookmark => bookmark.listId === selectedManagementListId)}
+          allLists={listsWithCounts}
+          onDeleteBookmark={handleDeleteBookmark}
+          onMoveBookmark={handleMoveBookmark}
+          onRemoveFolder={handleRemoveFolder}
+        />
+      )}
     </div>
   );
 }

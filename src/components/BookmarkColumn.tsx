@@ -13,6 +13,7 @@ interface BookmarkColumnProps {
   onDragStart: (listId: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetListId: string) => void;
+  onColumnClick: (listId: string) => void;
   isDragging: boolean;
   isDraggedOver: boolean;
   showPlaceholder: boolean;
@@ -26,6 +27,7 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
   onDragStart,
   onDragOver,
   onDrop,
+  onColumnClick,
   isDragging,
   isDraggedOver,
   showPlaceholder,
@@ -76,9 +78,18 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
     );
   }
 
+  const handleHeaderClick = (e: React.MouseEvent) => {
+    // Don't trigger column click if clicking on buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+    onColumnClick(list.id);
+  };
+
   return (
     <div 
-      className={`flex-shrink-0 w-72 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-lg border border-white border-opacity-20 transition-all duration-200 ${
+      className={`flex-shrink-0 w-72 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-lg border border-white border-opacity-20 transition-all duration-200 transform-gpu ${
         isDragging 
           ? 'opacity-30 scale-95 rotate-2 z-50 shadow-2xl' 
           : isDraggedOver 
@@ -91,7 +102,10 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
       onDrop={handleDrop}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200 border-opacity-50 cursor-move">
+      <div 
+        className="flex items-center justify-between p-3 border-b border-gray-200 border-opacity-50 cursor-pointer hover:bg-gray-50 hover:bg-opacity-50 transition-colors"
+        onClick={handleHeaderClick}
+      >
         <div className="flex items-center space-x-2">
           <div 
             className="w-2.5 h-2.5 rounded-full shadow-sm"
@@ -153,7 +167,7 @@ const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
       </div>
 
       {/* Column Content */}
-      <div className="max-h-[90vh] overflow-y-auto">
+      <div className="max-h-[80vh] overflow-y-auto overflow-x-hidden rounded-b-xl">
         {bookmarks.length > 0 ? (
           <div>
             {bookmarks.map((bookmark) => (

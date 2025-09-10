@@ -169,7 +169,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                 <Columns className="w-6 h-6 text-gray-800" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-white drop-shadow-lg">Bookmarks</h1>
+                <h1 className="text-xl font-semibold text-white drop-shadow-lg">Webmarks</h1>
                 <p className="text-white text-opacity-90 text-xs drop-shadow">Settings</p>
               </div>
             </div>

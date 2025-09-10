@@ -22,7 +22,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onOpenSettings }) => {
 
           {/* Title */}
           <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            Welcome to Bookmarks
+            Welcome to Webmarks
           </h2>
 
           {/* Description */}
@@ -50,7 +50,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onOpenSettings }) => {
                 <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-semibold">
                   3
                 </div>
-                <p className="text-sm text-gray-700">Save and start organizing your bookmarks</p>
+                <p className="text-sm text-gray-700">Save and start organizing your webmarks</p>
               </div>
             </div>
           </div>

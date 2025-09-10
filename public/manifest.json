@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Bookmarks",
+  "name": "Webmarks",
   "version": "1.0.0",
-  "description": "A Chrome extension for managing bookmarks",
+  "description": "A Chrome extension for managing webmarks",
   "permissions": [
     "bookmarks",
     "tabs",
@@ -13,7 +13,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Open Bookmarks Manager",
+    "default_title": "Open Webmarks Manager",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

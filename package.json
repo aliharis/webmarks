@@ -1,7 +1,7 @@
 {
-  "name": "bookmarks-chrome-extension",
+  "name": "webmarks-chrome-extension",
   "version": "1.0.0",
-  "description": "Chrome extension for managing bookmarks",
+  "description": "Chrome extension for managing webmarks",
   "private": true,
   "scripts": {
     "dev": "webpack --watch --mode development",
